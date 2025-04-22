@@ -1,33 +1,678 @@
-<!doctype html>
-<html class="no-js" lang="">
-
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-  <link rel="stylesheet" href="css/style.css">
-  <meta name="description" content="">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Local vs Git Remoto</title>
+  <style>
+    :root {
+      --primary: #2e8b57;
+      --secondary: #f4a261;
+      --dark: #2a2a2a;
+      --light: #f5f5f5;
+      --hover: #3aa76d;
+    }
 
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
-  <meta property="og:image:alt" content="">
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.png">
+    body {
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      padding-bottom: 50px;
+    }
 
-  <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#fafafa">
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      margin-bottom: 40px;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      animation: slideIn 1s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin: 30px 0 15px;
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 5px;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+      color: var(--dark);
+    }
+
+    p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    .intro-section {
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      transition: transform 0.3s ease;
+    }
+
+    .intro-section:hover {
+      transform: translateY(-5px);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: var(--primary);
+      color: white;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .command-example {
+      background-color: #f3f3f3;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: monospace;
+      display: inline-block;
+      margin-top: 5px;
+    }
+
+    .tabs {
+      display: flex;
+      margin: 20px 0;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background-color: #e4e4e4;
+      cursor: pointer;
+      border-radius: 5px 5px 0 0;
+      margin-right: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .tab.active {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 20px;
+      background-color: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .emoji {
+      font-size: 1.5rem;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .highlight {
+      background-color: #ffffcc;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: var(--primary);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 15px;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: var(--hover);
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: 1px dotted var(--primary);
+      cursor: help;
+    }
+
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      color: var(--dark);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        width: 95%;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .tabs {
+        flex-direction: column;
+      }
+
+      .tab {
+        border-radius: 0;
+        margin-bottom: 2px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+<header>
+  <div class="container">
+    <h1><span class="emoji">📊</span> Git Local vs Git Remoto</h1>
+    <p>Entendiendo las diferencias y características de cada sistema</p>
+  </div>
+</header>
 
-  <!-- Add your site or application content here -->
-  <p>Hello world! This is HTML5 Boilerplate.</p>
-  <script src="js/app.js"></script>
+<div class="container">
+  <section class="intro-section">
+    <h2><span class="emoji">📝</span> Introducción</h2>
+    <p>Git es un sistema de control de versiones distribuido diseñado para rastrear cambios en archivos de código fuente durante el desarrollo de software. Permite a múltiples desarrolladores trabajar en un proyecto simultáneamente sin interferir unos con otros. Git maneja dos conceptos fundamentales: <strong>repositorios locales</strong> y <strong>repositorios remotos</strong>.</p>
 
+    <p>Un <strong>repositorio local</strong> es el que se encuentra en tu máquina y donde realizas cambios en tu código. Un <strong>repositorio remoto</strong> es una versión del proyecto que está alojada en Internet o en una red (como GitHub, GitLab o Bitbucket), permitiendo la colaboración entre diferentes desarrolladores.</p>
+  </section>
+
+  <section class="intro-section">
+    <h2><span class="emoji">🎯</span> Objetivo</h2>
+    <p>Este documento tiene como objetivo explicar claramente las diferencias entre Git local y Git remoto, proporcionar una comparativa de sus características principales y ofrecer ejemplos de los comandos más utilizados en ambos entornos. Al finalizar, tendrás una comprensión sólida de cómo funcionan estos dos aspectos de Git y cómo interactúan entre sí.</p>
+  </section>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="differences">Diferencias</div>
+    <div class="tab" data-tab="characteristics">Características</div>
+    <div class="tab" data-tab="commands">Comandos</div>
+  </div>
+
+  <div class="tab-content active" id="differences">
+    <h3><span class="emoji">⚖️</span> Diferencias entre Git Local y Git Remoto</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>Aspecto</th>
+          <th>Git Local</th>
+          <th>Git Remoto</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>Ubicación</td>
+          <td>Almacenado en tu equipo local</td>
+          <td>Alojado en un servidor (GitHub, GitLab, etc.)</td>
+        </tr>
+        <tr>
+          <td>Accesibilidad</td>
+          <td>Solo accesible desde tu máquina</td>
+          <td>Accesible para todos los colaboradores</td>
+        </tr>
+        <tr>
+          <td>Conectividad</td>
+          <td>No requiere conexión a Internet</td>
+          <td>Requiere conexión a Internet</td>
+        </tr>
+        <tr>
+          <td>Propósito principal</td>
+          <td>Desarrollo individual y seguimiento de cambios</td>
+          <td>Colaboración y respaldo del proyecto</td>
+        </tr>
+        <tr>
+          <td>Flujo de trabajo</td>
+          <td>Modificar, añadir y confirmar cambios</td>
+          <td>Enviar, recibir y sincronizar cambios</td>
+        </tr>
+        <tr>
+          <td>Operaciones básicas</td>
+          <td>commit, branch, merge, checkout</td>
+          <td>push, pull, fetch, clone</td>
+        </tr>
+        <tr>
+          <td>Reversión de cambios</td>
+          <td>Más sencilla (reset, revert)</td>
+          <td>Más compleja (puede requerir nuevos commits)</td>
+        </tr>
+        <tr>
+          <td>Seguridad</td>
+          <td>Limitada a la seguridad de tu equipo</td>
+          <td>Depende del servicio remoto y sus políticas</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-content" id="characteristics">
+    <h3><span class="emoji">🔍</span> Características de Git Local y Git Remoto</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>Git Local</th>
+          <th>Git Remoto</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>
+            <ul>
+              <li>Control total sobre el historial de cambios</li>
+              <li>Trabajo offline sin restricciones</li>
+              <li>Velocidad de operaciones más rápida</li>
+              <li>Experimentación sin afectar a otros</li>
+              <li>Manejo de ramas locales sin restricciones</li>
+              <li>Gestión del área de preparación (staging)</li>
+              <li>Capacidad de deshacer cambios no confirmados</li>
+              <li>Control de versiones personal</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Respaldo centralizado del código</li>
+              <li>Facilita la colaboración entre equipos</li>
+              <li>Permite revisiones de código</li>
+              <li>Integración con CI/CD y otras herramientas</li>
+              <li>Gestión de permisos y accesos</li>
+              <li>Posibilidad de realizar fork (bifurcación)</li>
+              <li>Gestión de problemas (issues) y solicitudes de cambio (pull requests)</li>
+              <li>Visibilidad del proyecto</li>
+            </ul>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="emoji">🔄</span> Ciclo de trabajo Git Local-Remoto</h3>
+    <p>El flujo típico de trabajo entre Git local y remoto sigue este patrón:</p>
+    <ol>
+      <li>Clonar un repositorio remoto o inicializar uno local</li>
+      <li>Crear una rama para nuevas características o correcciones</li>
+      <li>Realizar cambios en los archivos</li>
+      <li>Añadir los cambios al área de preparación (staging)</li>
+      <li>Confirmar (commit) los cambios en el repositorio local</li>
+      <li>Enviar (push) los cambios al repositorio remoto</li>
+      <li>Otros desarrolladores pueden obtener (pull) esos cambios</li>
+      <li>Resolver conflictos si surgen</li>
+      <li>Fusionar (merge) las ramas cuando las características estén completas</li>
+    </ol>
+  </div>
+
+  <div class="tab-content" id="commands">
+    <h3><span class="emoji">💻</span> Comandos de Git Local</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>Comando</th>
+          <th>Descripción</th>
+          <th>Ejemplo</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><code>git init</code></td>
+          <td>Inicializa un nuevo repositorio Git local</td>
+          <td><div class="command-example">git init</div></td>
+        </tr>
+        <tr>
+          <td><code>git add</code></td>
+          <td>Añade archivos al área de preparación (staging)</td>
+          <td>
+            <div class="command-example">git add archivo.txt</div>
+            <div class="command-example">git add .</div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>git commit</code></td>
+          <td>Guarda los cambios en el repositorio local con un mensaje</td>
+          <td><div class="command-example">git commit -m "Añadida nueva funcionalidad"</div></td>
+        </tr>
+        <tr>
+          <td><code>git status</code></td>
+          <td>Muestra el estado actual del repositorio</td>
+          <td><div class="command-example">git status</div></td>
+        </tr>
+        <tr>
+          <td><code>git log</code></td>
+          <td>Muestra el historial de commits</td>
+          <td>
+            <div class="command-example">git log</div>
+            <div class="command-example">git log --oneline</div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>git branch</code></td>
+          <td>Gestiona las ramas locales</td>
+          <td>
+            <div class="command-example">git branch</div>
+            <div class="command-example">git branch nueva-rama</div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>git checkout</code></td>
+          <td>Cambia entre ramas o commits</td>
+          <td>
+            <div class="command-example">git checkout rama-dev</div>
+            <div class="command-example">git checkout -b nueva-rama</div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>git merge</code></td>
+          <td>Fusiona ramas</td>
+          <td><div class="command-example">git merge rama-funcionalidad</div></td>
+        </tr>
+        <tr>
+          <td><code>git reset</code></td>
+          <td>Deshace cambios locales</td>
+          <td>
+            <div class="command-example">git reset --hard HEAD~1</div>
+            <div class="command-example">git reset archivo.txt</div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>git stash</code></td>
+          <td>Guarda temporalmente los cambios no confirmados</td>
+          <td>
+            <div class="command-example">git stash</div>
+            <div class="command-example">git stash pop</div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="emoji">🌐</span> Comandos de Git Remoto</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>Comando</th>
+          <th>Descripción</th>
+          <th>Ejemplo</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><code>git clone</code></td>
+          <td>Copia un repositorio remoto a tu máquina local</td>
+          <td><div class="command-example">git clone https://github.com/usuario/repositorio.git</div></td>
+        </tr>
+        <tr>
+          <td><code>git remote</code></td>
+          <td>Gestiona conexiones a repositorios remotos</td>
+          <td>
+            <div class="command-example">git remote -v</div>
+            <div class="command-example">git remote add origin https://github.com/usuario/repo.git</div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>git push</code></td>
+          <td>Envía los commits locales al repositorio remoto</td>
+          <td>
+            <div class="command-example">git push origin main</div>
+            <div class="command-example">git push -u origin rama-nueva</div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>git pull</code></td>
+          <td>Obtiene y fusiona los cambios del repositorio remoto</td>
+          <td><div class="command-example">git pull origin main</div></td>
+        </tr>
+        <tr>
+          <td><code>git fetch</code></td>
+          <td>Descarga cambios del repositorio remoto sin fusionarlos</td>
+          <td>
+            <div class="command-example">git fetch origin</div>
+            <div class="command-example">git fetch --all</div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>git branch -r</code></td>
+          <td>Lista las ramas remotas</td>
+          <td><div class="command-example">git branch -r</div></td>
+        </tr>
+        <tr>
+          <td><code>git pull --rebase</code></td>
+          <td>Obtiene cambios y reaplica tus commits locales</td>
+          <td><div class="command-example">git pull --rebase origin main</div></td>
+        </tr>
+        <tr>
+          <td><code>git push --force</code></td>
+          <td>Fuerza el envío de commits (uso con precaución)</td>
+          <td><div class="command-example">git push --force origin rama-dev</div></td>
+        </tr>
+        <tr>
+          <td><code>git remote prune</code></td>
+          <td>Elimina referencias a ramas remotas que ya no existen</td>
+          <td><div class="command-example">git remote prune origin</div></td>
+        </tr>
+        <tr>
+          <td><code>git push --tags</code></td>
+          <td>Envía etiquetas al repositorio remoto</td>
+          <td><div class="command-example">git push origin --tags</div></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <section class="intro-section">
+    <h2><span class="emoji">🤔</span> ¿Cuándo usar cada uno?</h2>
+    <p>Utiliza <span class="tooltip">Git Local<span class="tooltip-text">Repositorio en tu máquina</span></span> cuando:</p>
+    <ul>
+      <li>Estés trabajando en cambios que no están listos para compartir</li>
+      <li>Necesites experimentar con nuevas ideas sin afectar al equipo</li>
+      <li>No tengas conexión a Internet</li>
+      <li>Quieras realizar operaciones rápidas en tu código</li>
+    </ul>
+
+    <p>Utiliza <span class="tooltip">Git Remoto<span class="tooltip-text">Repositorio en servidores como GitHub</span></span> cuando:</p>
+    <ul>
+      <li>Necesites compartir tu código con el equipo</li>
+      <li>Quieras respaldar tu trabajo en un servidor</li>
+      <li>Busques colaboración en tu proyecto</li>
+      <li>Debas implementar integración continua o despliegue</li>
+    </ul>
+
+    <button class="button" id="show-tip">Mostrar consejo útil</button>
+    <div id="tip" style="display: none; margin-top: 20px; padding: 15px; background-color: #e6f7ff; border-left: 4px solid #1890ff; border-radius: 4px;">
+      <p><strong>Consejo:</strong> Utiliza alias de Git para simplificar comandos comunes. Por ejemplo:</p>
+      <div class="command-example">git config --global alias.co checkout</div>
+      <div class="command-example">git config --global alias.br branch</div>
+      <div class="command-example">git config --global alias.st status</div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 - Guía de Git Local vs Git Remoto</p>
+  </footer>
+</div>
+
+<script>
+  // Manejo de pestañas
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Desactivar todas las pestañas y contenidos
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      // Activar la pestaña seleccionada
+      tab.classList.add('active');
+      const tabId = tab.getAttribute('data-tab');
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
+
+  // Mostrar/ocultar consejo
+  const tipButton = document.getElementById('show-tip');
+  const tip = document.getElementById('tip');
+
+  tipButton.addEventListener('click', () => {
+    if (tip.style.display === 'none') {
+      tip.style.display = 'block';
+      tipButton.textContent = 'Ocultar consejo';
+      // Animación simple
+      tip.style.animation = 'fadeIn 0.5s ease-in';
+    } else {
+      tip.style.display = 'none';
+      tipButton.textContent = 'Mostrar consejo útil';
+    }
+  });
+
+  // Animación para secciones al hacer scroll
+  const sections = document.querySelectorAll('.intro-section');
+
+  function checkScroll() {
+    sections.forEach(section => {
+      const sectionTop = section.getBoundingClientRect().top;
+      if (sectionTop < window.innerHeight * 0.8) {
+        section.style.opacity = '1';
+        section.style.transform = 'translateY(0)';
+      }
+    });
+  }
+
+  // Inicializar secciones con opacidad 0
+  sections.forEach(section => {
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(20px)';
+    section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  });
+
+  // Verificar posición al cargar y durante el scroll
+  window.addEventListener('load', checkScroll);
+  window.addEventListener('scroll', checkScroll);
+
+  // Añadir efecto de rebote a los emojis
+  const emojis = document.querySelectorAll('.emoji');
+  emojis.forEach(emoji => {
+    emoji.addEventListener('mouseover', () => {
+      emoji.style.display = 'inline-block';
+      emoji.style.animation = 'bounce 0.5s ease';
+    });
+
+    emoji.addEventListener('animationend', () => {
+      emoji.style.animation = '';
+    });
+  });
+
+  // Animación de rebote
+  const style = document.createElement('style');
+  style.textContent = `
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+        `;
+  document.head.appendChild(style);
+</script>
 </body>
-
 </html>
